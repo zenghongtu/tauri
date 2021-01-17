@@ -1,0 +1,26 @@
+{
+  "name": "@tauri-apps/core",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tauri-apps/tauri.git"
+  },
+  "author": "Lucas Nogueira <lucas@tauri.studio>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/tauri-apps/tauri/issues"
+  },
+  "homepage": "https://github.com/tauri-apps/tauri#readme",
+  "dependencies": {
+    "ffi-napi": "^3.1.0",
+    "ref-napi": "^3.0.1"
+  },
+  "devDependencies": {
+    "mocha": "^8.2.1"
+  }
+}

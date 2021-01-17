@@ -1,0 +1,14 @@
+workspace = {}
+
+[package]
+name = "tauri-c-binding"
+version = "0.1.0"
+authors = ["Lucas Nogueira <lucas@tauri.studio>"]
+edition = "2018"
+
+[lib]
+name = "tauri"
+crate-type = ["cdylib"]
+
+[dependencies]
+tauri = { path = "../.." }
