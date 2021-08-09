@@ -313,7 +313,11 @@ pub trait Manager<R: Runtime>: sealed::ManagerBase<R> {
   where
     T: Send + Sync + 'static,
   {
-    self.manager().inner.state.get()
+    self.manager().inner.state.try_get().unwrap_or_else(|| {
+      panic!(
+        "Failed to access managed state. You must call the `manage` API before reading a State."
+      )
+    })
   }
 
   /// Tries to get the managed state for the type `T`. Returns `None` if the type is not managed.
