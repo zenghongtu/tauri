@@ -298,22 +298,26 @@ impl<R: Runtime> WindowManager<R> {
       });
     }
 
+    let window_url = Url::parse(&pending.url).unwrap();
+    let window_origin = format!(
+      "{}://{}{}",
+      window_url.scheme(),
+      window_url.host().unwrap(),
+      if let Some(port) = window_url.port() {
+        format!(":{}", port)
+      } else {
+        "".into()
+      }
+    );
+
     if !registered_scheme_protocols.contains(&"tauri".into()) {
-      pending.register_uri_scheme_protocol("tauri", self.prepare_uri_scheme_protocol());
+      pending.register_uri_scheme_protocol(
+        "tauri",
+        self.prepare_uri_scheme_protocol(window_origin.clone()),
+      );
       registered_scheme_protocols.push("tauri".into());
     }
     if !registered_scheme_protocols.contains(&"asset".into()) {
-      let window_url = Url::parse(&pending.url).unwrap();
-      let window_origin = format!(
-        "{}://{}{}",
-        window_url.scheme(),
-        window_url.host().unwrap(),
-        if let Some(port) = window_url.port() {
-          format!(":{}", port)
-        } else {
-          "".into()
-        }
-      );
       pending.register_uri_scheme_protocol("asset", move |request| {
         #[cfg(target_os = "windows")]
         let path = request.uri().replace("asset://localhost/", "");
@@ -487,6 +491,7 @@ impl<R: Runtime> WindowManager<R> {
   #[allow(clippy::type_complexity)]
   fn prepare_uri_scheme_protocol(
     &self,
+    window_origin: String,
   ) -> Box<dyn Fn(&HttpRequest) -> Result<HttpResponse, Box<dyn std::error::Error>> + Send + Sync>
   {
     let manager = self.clone();
@@ -501,6 +506,7 @@ impl<R: Runtime> WindowManager<R> {
         .replace("tauri://localhost", "");
       let asset = manager.get_asset(path)?;
       HttpResponseBuilder::new()
+        .header("Access-Control-Allow-Origin", &window_origin)
         .mimetype(&asset.mime_type)
         .body(asset.bytes)
     })
