@@ -7,11 +7,86 @@
     "type": "opencollective",
     "url": "https://opencollective.com/tauri"
   },
+  "files": [
+    "CHANGELOG.md",
+    "dist"
+  ],
   "exports": {
-    "./package.json": "./package.json"
+    "app": {
+      "import": "./dist/app.mjs",
+      "require": "./dist/app.cjs"
+    },
+    "bundle": {
+      "import": "./dist/bundle.mjs",
+      "require": "./dist/bundle.cjs"
+    },
+    "cli": {
+      "import": "./dist/cli.mjs",
+      "require": "./dist/cli.cjs"
+    },
+    "clipboard": {
+      "import": "./dist/clipboard.mjs",
+      "require": "./dist/clipboard.cjs"
+    },
+    "dialog": {
+      "import": "./dist/dialog.mjs",
+      "require": "./dist/dialog.cjs"
+    },
+    "event": {
+      "import": "./dist/event.mjs",
+      "require": "./dist/event.cjs"
+    },
+    "fs": {
+      "import": "./dist/fs.mjs",
+      "require": "./dist/fs.cjs"
+    },
+    "globalShortcut": {
+      "import": "./dist/globalShortcut.mjs",
+      "require": "./dist/globalShortcut.cjs"
+    },
+    "http": {
+      "import": "./dist/http.mjs",
+      "require": "./dist/http.cjs"
+    },
+    "index": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    },
+    "notification": {
+      "import": "./dist/notification.mjs",
+      "require": "./dist/notification.cjs"
+    },
+    "os": {
+      "import": "./dist/os.mjs",
+      "require": "./dist/os.cjs"
+    },
+    "path": {
+      "import": "./dist/path.mjs",
+      "require": "./dist/path.cjs"
+    },
+    "process": {
+      "import": "./dist/process.mjs",
+      "require": "./dist/process.cjs"
+    },
+    "shell": {
+      "import": "./dist/shell.mjs",
+      "require": "./dist/shell.cjs"
+    },
+    "tauri": {
+      "import": "./dist/tauri.mjs",
+      "require": "./dist/tauri.cjs"
+    },
+    "updater": {
+      "import": "./dist/updater.mjs",
+      "require": "./dist/updater.cjs"
+    },
+    "window": {
+      "import": "./dist/window.mjs",
+      "require": "./dist/window.cjs"
+    }
   },
   "scripts": {
-    "build": "rimraf ./dist && rollup -c --silent && node ./scripts/after-build.cjs",
+    "build": "rimraf ./dist && rollup -c --silent && node ./scripts/after-build.mjs",
     "npm-pack": "yarn build && cd ./dist && npm pack",
     "npm-publish": "yarn build && cd ./dist && yarn publish --access public --loglevel silly",
     "lint": "eslint --ext ts \"./src/**/*.ts\"",
@@ -59,9 +134,9 @@
     "eslint-plugin-node": "11.1.0",
     "eslint-plugin-promise": "6.0.0",
     "eslint-plugin-security": "1.4.0",
+    "fast-glob": "^3.2.11",
     "lockfile-lint": "4.6.2",
     "prettier": "2.5.1",
-    "regenerator-runtime": "0.13.9",
     "rimraf": "3.0.2",
     "rollup": "2.63.0",
     "rollup-plugin-terser": "7.0.2",

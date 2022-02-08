@@ -2,101 +2,50 @@
 // SPDX-License-Identifier: Apache-2.0
 // SPDX-License-Identifier: MIT
 
-// rollup.config.js
-import { readdirSync } from 'fs'
-import { terser } from 'rollup-plugin-terser'
-import resolve from '@rollup/plugin-node-resolve'
-import commonjs from '@rollup/plugin-commonjs'
-import sucrase from '@rollup/plugin-sucrase'
-import babel, { getBabelOutputPlugin } from '@rollup/plugin-babel'
+import fg from 'fast-glob'
+import { basename } from 'path'
 import typescript from '@rollup/plugin-typescript'
+import { terser } from 'rollup-plugin-terser'
 import pkg from './package.json'
+
+const manualChunks = Object.fromEntries(
+  fg.sync('./src/*.ts').map((p) => [basename(p, '.ts'), [p]])
+)
 
 export default [
   {
-    input: (() => {
-      let input = {}
-      readdirSync('src')
-        .filter((e) => e.endsWith('.ts') && e !== 'bundle.ts')
-        .forEach((mod) => (input[`${mod.replace('.ts', '')}`] = `./src/${mod}`))
-      return input
-    })(),
-    treeshake: true,
-    perf: true,
+    input: 'src/index.ts',
+    manualChunks,
+    external: [
+      ...Object.keys(pkg.dependencies || {}),
+      ...Object.keys(pkg.peerDependencies || {})
+    ],
     output: [
       {
-        dir: 'dist/',
-        entryFileNames: '[name].cjs',
-        format: 'cjs',
-        chunkFileNames: '[name]-[hash].cjs',
-        exports: 'named',
-        globals: {}
+        format: 'esm',
+        entryFileNames: '[name].mjs',
+        chunkFileNames: '[name].mjs',
+        dir: './dist'
       },
       {
-        dir: 'dist/',
-        entryFileNames: '[name].js',
-        format: 'esm',
-        exports: 'named',
-        globals: {}
+        format: 'cjs',
+        entryFileNames: '[name].cjs',
+        chunkFileNames: '[name].cjs',
+        dir: './dist'
       }
     ],
-    plugins: [
-      commonjs({}),
-      resolve({
-        // pass custom options to the resolve plugin
-        customResolveOptions: {
-          moduleDirectories: ['node_modules']
-        }
-      }),
-      typescript({
-        tsconfig: './tsconfig.json'
-      }),
-      babel({
-        configFile: false,
-        presets: [['@babel/preset-env'], ['@babel/preset-typescript']]
-      }),
-      terser()
-    ],
-    external: [
-      ...Object.keys(pkg.dependencies || {}),
-      ...Object.keys(pkg.peerDependencies || {})
-    ]
+    plugins: [typescript()]
   },
   {
-    input: {
-      bundle: './src/bundle.ts'
+    input: 'src/index.ts',
+    output: {
+      format: 'iife',
+      name: '__TAURI__',
+      file: '../../core/tauri/scripts/bundle.js',
     },
-    output: [
-      {
-        name: '__TAURI__',
-        dir: '../../core/tauri/scripts',
-        entryFileNames: 'bundle.js',
-        format: 'umd',
-        plugins: [
-          getBabelOutputPlugin({
-            presets: [['@babel/preset-env', { modules: 'umd' }]],
-            allowAllFormats: true
-          }),
-          terser()
-        ],
-        globals: {}
-      }
-    ],
     plugins: [
-      sucrase({
-        exclude: ['node_modules'],
-        transforms: ['typescript']
-      }),
-      resolve({
-        // pass custom options to the resolve plugin
-        customResolveOptions: {
-          moduleDirectories: ['node_modules']
-        }
-      })
-    ],
-    external: [
-      ...Object.keys(pkg.dependencies || {}),
-      ...Object.keys(pkg.peerDependencies || {})
+      typescript(),
+      terser()
     ]
   }
 ]
