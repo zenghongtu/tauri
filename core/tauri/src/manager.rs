@@ -493,21 +493,7 @@ impl<R: Runtime> WindowManager<R> {
       use url::Position;
       let asset_scope = self.state().get::<crate::Scopes>().asset_protocol.clone();
       let window_url = Url::parse(&pending.url).unwrap();
-      let window_origin =
-        if cfg!(windows) && window_url.scheme() != "http" && window_url.scheme() != "https" {
-          format!("https://{}.localhost", window_url.scheme())
-        } else {
-          format!(
-            "{}://{}{}",
-            window_url.scheme(),
-            window_url.host().unwrap(),
-            if let Some(port) = window_url.port() {
-              format!(":{}", port)
-            } else {
-              "".into()
-            }
-          )
-        };
+      let window_origin = format!("*");
       pending.register_uri_scheme_protocol("asset", move |request| {
         let parsed_path = Url::parse(request.uri())?;
         let filtered_path = &parsed_path[..Position::AfterPath];
