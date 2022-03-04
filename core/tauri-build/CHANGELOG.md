@@ -1,5 +1,11 @@
 # Changelog
 
+## \[1.0.0-rc.4]
+
+- Use `is_symlink` API compatible with Rust v1.57 instead of std/fs/struct.Metadata.html#method.is_symlink.
+  - Bumped due to a bump in tauri-utils.
+  - [73388119](https://www.github.com/tauri-apps/tauri/commit/73388119e653e7902b19beef2ab6d7c5f8a7b83a) use older symlink check function ([#3579](https://www.github.com/tauri-apps/tauri/pull/3579)) on 2022-03-01
+
 ## \[1.0.0-rc.3]
 
 - Automatically emit `cargo:rustc-env=MACOSX_DEPLOYMENT_TARGET` with the value set on `tauri.conf.json > tauri > bundle > macos > minimumSystemVersion`.
